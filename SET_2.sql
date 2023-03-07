@@ -58,3 +58,30 @@ SELECT *
 FROM FactInternetSales s
 INNER JOIN DimProduct p ON s.ProductKey = p.ProductKey
 WHERE p.EnglishProductName LIKE 'Road%' --put % where you want wildcard
+
+select OrderDate, sum(SalesAmount)
+from FactInternetSales
+group by OrderDate
+order by Sum(salesAmount) desc
+
+-- simple aggregations
+-- Use additional aggregations to understand more about product sales such as distribution of sales etc..
+SELECT 
+		cat.EnglishProductCategoryName 'Category'
+    ,	sub.EnglishProductSubcategoryName 'SubCategory'
+	,	count(1) 'Count' -- How many sales where there?
+	,	sum(s.SalesAmount) 'Sales' -- How much sales did we have?
+    ,	avg(s.SalesAmount) 'Avg_SalesAmount' -- What was the Avg sale amount?
+    ,	min(s.SalesAmount) 'Min_SaleAmount' -- What was the Min sale amount?
+    ,	max(s.SalesAmount) 'Max_SaleAmount' -- What was the Max sale amount
+FROM FactInternetSales s
+LEFT JOIN DimProduct p ON s.ProductKey = p.ProductKey
+LEFT JOIN DimProductSubcategory sub ON p.ProductSubcategoryKey = sub.ProductSubcategoryKey
+LEFT JOIN DimProductCategory cat ON sub.ProductCategoryKey = cat.ProductCategoryKey
+-- must use group by in order for aggregation to work properly
+GROUP BY
+		cat.EnglishProductCategoryName -- column aliases aren't allowed
+    ,	sub.EnglishProductSubcategoryName
+ORDER BY
+		cat.EnglishProductCategoryName
+	,	sub.EnglishProductSubcategoryName
