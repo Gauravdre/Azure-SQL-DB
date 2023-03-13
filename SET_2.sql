@@ -85,3 +85,29 @@ GROUP BY
 ORDER BY
 		cat.EnglishProductCategoryName
 	,	sub.EnglishProductSubcategoryName
+
+-- Year 2013 and Product Category/ Product subcategory wise.
+SELECT 
+		YEAR(s.OrderDate) 'Year'
+	,	cat.EnglishProductCategoryName 'Category'
+    ,	sub.EnglishProductSubcategoryName 'SubCategory'	
+	,	count(1) 'Count' -- use 1 instead of a field for faster performance
+	,	sum(s.SalesAmount) 'Sales'
+    ,	avg(s.SalesAmount) 'Avg_Quantity'
+    ,	min(s.SalesAmount) 'Min_SaleAmount'
+    ,	max(s.SalesAmount) 'Max_SaleAmount'
+
+FROM FactInternetSales s
+INNER JOIN DimProduct p ON s.ProductKey = p.ProductKey
+INNER JOIN DimProductSubcategory sub ON p.ProductSubcategoryKey = sub.ProductSubcategoryKey
+INNER JOIN DimProductCategory cat ON sub.ProductCategoryKey = cat.ProductCategoryKey
+-- filter
+WHERE YEAR(s.OrderDate) = 2013 --use date function to parse year
+-- must use group by in order for aggregation to work properly
+GROUP BY
+		YEAR(s.OrderDate)
+	,	cat.EnglishProductCategoryName -- column aliases aren't allowed
+    ,	sub.EnglishProductSubcategoryName
+ORDER BY
+		cat.EnglishProductCategoryName
+	,	sub.EnglishProductSubcategoryName
